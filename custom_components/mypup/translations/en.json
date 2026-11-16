@@ -11,14 +11,14 @@
       },
       "cookie": {
         "title": "Connect via Session Cookie",
-        "description": "1. Sign in at {auth_url} with **Remember Me** checked.\n2. Open DevTools → **Network**, click any `login.mypup.app` request (e.g. `authorize` or `checksession`), and copy its **Request Headers → `cookie`** value.",
+        "description": "1. Open [MyPup Login]({auth_url}) and sign in with **Remember Me** checked.\n2. Open DevTools → **Network**, click any `login.mypup.app` request (e.g. `authorize` or `checksession`), and copy its **Request Headers → `cookie`** value.",
         "data": {
           "auth_cookies": "login.mypup.app Cookie header"
         }
       },
       "token": {
         "title": "Connect via Access Token",
-        "description": "Sign in at {auth_url}, then on `mypup.app` open DevTools Console and run:\n`copy(JSON.parse(sessionStorage.getItem('oidc.user:https://login.mypup.app:mypup.web.public')).access_token)`",
+        "description": "Open [MyPup Login]({auth_url}) and sign in, then on `mypup.app` open DevTools Console and run:\n`copy(JSON.parse(sessionStorage.getItem('oidc.user:https://login.mypup.app:mypup.web.public')).access_token)`",
         "data": {
           "access_token": "Access Token"
         }
