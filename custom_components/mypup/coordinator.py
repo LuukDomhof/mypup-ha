@@ -24,6 +24,9 @@ from .const import (
     DEFAULT_SCAN_INTERVAL_MINUTES,
     DEFAULT_SHIPMENTS_LIMIT,
     DOMAIN,
+    EVENT_PARCEL_INCOMING,
+    EVENT_PARCEL_READY,
+    INCOMING_STATES,
     STATE_READY_FOR_PICKUP,
 )
 
@@ -50,6 +53,26 @@ def build_mypup_device_info(
     )
 
 
+def _format_parcel(
+    item: dict[str, Any], codes: dict[str, str | None] | None = None
+) -> dict[str, Any]:
+    """Build a normalized parcel dictionary for attributes and events."""
+    parcel: dict[str, Any] = {
+        "shipment_uid": item.get("shipmentUid"),
+        "reference_no": item.get("referenceNo"),
+        "description": item.get("description"),
+        "state_code": item.get("stateCode"),
+        "pickup_point": item.get("bookedPupName"),
+        "locker": item.get("transferDetails"),
+        "state_start": item.get("stateStart"),
+        "date_created": item.get("dateCreated"),
+    }
+    if codes is not None:
+        parcel["pin"] = codes.get("pin")
+        parcel["qr_code"] = codes.get("qr_code")
+    return parcel
+
+
 class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
     """Coordinator that polls MyPup shipments and pickup point info."""
 
@@ -70,6 +93,7 @@ class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         )
         self.client = client
         self.entry = entry
+        self._known_states: dict[str, str] | None = None
 
     async def _async_fetch_access_codes(self, shipment_uid: str) -> dict[str, str | None]:
         """Fetch PIN and QR code for a ReadyForPickup shipment, returning empty on error."""
@@ -89,6 +113,41 @@ class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 "Could not fetch access config for shipment %s: %s", shipment_uid, err
             )
         return {"pin": pin, "qr_code": qr_code}
+
+    def _fire_transition_events(
+        self,
+        items: list[dict[str, Any]],
+        access_codes: dict[str, dict[str, str | None]],
+    ) -> None:
+        """Fire HA events when shipments transition into incoming or ready states."""
+        current_states = {
+            item["shipmentUid"]: item.get("stateCode", "")
+            for item in items
+            if item.get("shipmentUid")
+        }
+
+        if self._known_states is None:
+            # Skip firing events on initial startup poll
+            self._known_states = current_states
+            return
+
+        for item in items:
+            uid = item.get("shipmentUid")
+            if not uid:
+                continue
+            new_state = item.get("stateCode", "")
+            old_state = self._known_states.get(uid)
+            if new_state == old_state:
+                continue
+
+            if new_state == STATE_READY_FOR_PICKUP:
+                payload = _format_parcel(item, access_codes.get(uid, {}))
+                self.hass.bus.async_fire(EVENT_PARCEL_READY, payload)
+            elif new_state in INCOMING_STATES and old_state not in INCOMING_STATES:
+                payload = _format_parcel(item)
+                self.hass.bus.async_fire(EVENT_PARCEL_INCOMING, payload)
+
+        self._known_states = current_states
 
     async def _async_update_data(self) -> dict[str, Any]:
         try:
@@ -118,19 +177,30 @@ class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 )
 
             items = shipments_resp.get("items", [])
+            incoming: list[dict[str, Any]] = []
             ready: list[dict[str, Any]] = []
+            previous: list[dict[str, Any]] = []
             access_codes: dict[str, dict[str, str | None]] = {}
 
             for item in items:
-                if item.get("stateCode") == STATE_READY_FOR_PICKUP:
+                state = item.get("stateCode")
+                uid = item.get("shipmentUid")
+                if state == STATE_READY_FOR_PICKUP:
                     ready.append(item)
-                    uid = item.get("shipmentUid")
                     if fetch_codes and uid:
                         access_codes[uid] = await self._async_fetch_access_codes(uid)
+                elif state in INCOMING_STATES:
+                    incoming.append(item)
+                else:
+                    previous.append(item)
+
+            self._fire_transition_events(items, access_codes)
 
             return {
                 "shipments": items,
+                "incoming_shipments": incoming,
                 "ready_shipments": ready,
+                "previous_shipments": previous,
                 "access_codes": access_codes,
                 "pickup_point": pup_resp,
             }

@@ -27,3 +27,14 @@ DEFAULT_SHIPMENTS_LIMIT = 25
 DEFAULT_FETCH_ACCESS_CODES = True
 
 STATE_READY_FOR_PICKUP = "ReadyForPickup"
+INCOMING_STATES = frozenset(
+    {
+        "Registered",
+        "Arrived",
+        "WaitForLocker",
+        "LockerAssigned",
+    }
+)
+
+EVENT_PARCEL_INCOMING = "mypup_parcel_incoming"
+EVENT_PARCEL_READY = "mypup_parcel_ready"
