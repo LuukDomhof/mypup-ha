@@ -38,7 +38,7 @@ class MyPupUnlockNextLockerButton(CoordinatorEntity[MyPupDataUpdateCoordinator],
     """Button to unlock the locker for the next parcel ready for pickup."""
 
     _attr_has_entity_name = True
-    _attr_name = "Unlock ready locker"
+    _attr_translation_key = "unlock_ready_locker"
     _attr_icon = "mdi:locker"
 
     def __init__(self, coordinator: MyPupDataUpdateCoordinator, entry: ConfigEntry) -> None:
@@ -97,7 +97,7 @@ class MyPupRefreshButton(CoordinatorEntity[MyPupDataUpdateCoordinator], ButtonEn
     """Button to manually refresh MyPup shipments."""
 
     _attr_has_entity_name = True
-    _attr_name = "Refresh parcels"
+    _attr_translation_key = "refresh_parcels"
     _attr_icon = "mdi:refresh"
 
     def __init__(self, coordinator: MyPupDataUpdateCoordinator, entry: ConfigEntry) -> None:

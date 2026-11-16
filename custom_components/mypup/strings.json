@@ -54,5 +54,32 @@
         }
       }
     }
+  },
+  "entity": {
+    "sensor": {
+      "incoming_parcels": {
+        "name": "Incoming parcels"
+      },
+      "ready_parcels": {
+        "name": "Parcels ready for pickup"
+      },
+      "previous_parcels": {
+        "name": "Previous parcels"
+      },
+      "total_parcels": {
+        "name": "Total parcels"
+      },
+      "main_pickup_point": {
+        "name": "Main pickup point"
+      }
+    },
+    "button": {
+      "unlock_ready_locker": {
+        "name": "Unlock ready locker"
+      },
+      "refresh_parcels": {
+        "name": "Refresh parcels"
+      }
+    }
   }
 }

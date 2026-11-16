@@ -50,7 +50,7 @@ class MyPupBaseSensor(CoordinatorEntity[MyPupDataUpdateCoordinator], SensorEntit
 class MyPupIncomingParcelsSensor(MyPupBaseSensor):
     """Number of incoming (pre-locker) parcels."""
 
-    _attr_name = "Incoming parcels"
+    _attr_translation_key = "incoming_parcels"
     _attr_icon = "mdi:truck-delivery"
     _attr_state_class = SensorStateClass.MEASUREMENT
 
@@ -75,7 +75,7 @@ class MyPupIncomingParcelsSensor(MyPupBaseSensor):
 class MyPupReadyParcelsSensor(MyPupBaseSensor):
     """Number of parcels ready for pickup."""
 
-    _attr_name = "Parcels ready for pickup"
+    _attr_translation_key = "ready_parcels"
     _attr_icon = "mdi:package-variant-closed-check"
     _attr_state_class = SensorStateClass.MEASUREMENT
 
@@ -101,7 +101,7 @@ class MyPupReadyParcelsSensor(MyPupBaseSensor):
 class MyPupPreviousParcelsSensor(MyPupBaseSensor):
     """Number of previous/completed parcels."""
 
-    _attr_name = "Previous parcels"
+    _attr_translation_key = "previous_parcels"
     _attr_icon = "mdi:package-check"
     _attr_state_class = SensorStateClass.MEASUREMENT
 
@@ -126,7 +126,7 @@ class MyPupPreviousParcelsSensor(MyPupBaseSensor):
 class MyPupTotalParcelsSensor(MyPupBaseSensor):
     """Total number of tracked parcels."""
 
-    _attr_name = "Total parcels"
+    _attr_translation_key = "total_parcels"
     _attr_icon = "mdi:package-variant"
     _attr_state_class = SensorStateClass.MEASUREMENT
 
@@ -142,7 +142,7 @@ class MyPupTotalParcelsSensor(MyPupBaseSensor):
 class MyPupMainPickupPointSensor(MyPupBaseSensor):
     """Primary MyPup Pick Up Point."""
 
-    _attr_name = "Main pickup point"
+    _attr_translation_key = "main_pickup_point"
     _attr_icon = "mdi:locker-multiple"
 
     def __init__(self, coordinator: MyPupDataUpdateCoordinator, entry: ConfigEntry) -> None:
