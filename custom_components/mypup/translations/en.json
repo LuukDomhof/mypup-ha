@@ -3,18 +3,33 @@
     "step": {
       "user": {
         "title": "Connect your MyPup account",
-        "description": "Sign in at {auth_url} (with Remember Me checked) so login.mypup.app sets a persistent session cookie, then paste your login.mypup.app Cookie header (recommended for automatic background renewal) or an access_token.",
-        "data": {
-          "auth_cookies": "login.mypup.app Cookie header or JSON (recommended)",
-          "access_token": "Access Token (optional fallback, short-lived)"
+        "description": "Choose how Home Assistant should authenticate with MyPup.",
+        "menu_options": {
+          "cookie": "Session Cookie (recommended — auto-renews in background)",
+          "token": "Access Token (quick test — short-lived)"
         }
       },
-      "reauth_confirm": {
-        "title": "Re-authenticate MyPup",
-        "description": "Your MyPup session expired. Sign in at {auth_url} and paste updated login.mypup.app cookies or an access_token.",
+      "cookie": {
+        "title": "Connect via Session Cookie",
+        "description": "1. Sign in at {auth_url} with **Remember Me** checked.\n2. Open DevTools → **Network**, click any `login.mypup.app` request (e.g. `authorize` or `checksession`), and copy its **Request Headers → `cookie`** value.",
         "data": {
-          "auth_cookies": "login.mypup.app Cookie header or JSON (recommended)",
-          "access_token": "Access Token (optional fallback)"
+          "auth_cookies": "login.mypup.app Cookie header"
+        }
+      },
+      "token": {
+        "title": "Connect via Access Token",
+        "description": "Sign in at {auth_url}, then on `mypup.app` open DevTools Console and run:\n`copy(JSON.parse(sessionStorage.getItem('oidc.user:https://login.mypup.app:mypup.web.public')).access_token)`",
+        "data": {
+          "access_token": "Access Token"
+        }
+      },
+      "initial_options": {
+        "title": "Configure MyPup Options",
+        "description": "Set your preferred polling and parcel options (you can change these later under Configure).",
+        "data": {
+          "scan_interval": "Polling interval (minutes)",
+          "shipments_limit": "Number of shipments to fetch",
+          "fetch_access_codes": "Fetch pickup PIN & QR codes for ready parcels"
         }
       }
     },
