@@ -145,29 +145,30 @@ class MyPupApiClient:
                 location = resp.headers.get("Location", "")
         except aiohttp.ClientError as err:
             raise MyPupApiError(f"Network error during silent renewal: {err}") from err
-            parsed = urllib.parse.urlparse(location)
-            qs = urllib.parse.parse_qs(parsed.fragment or parsed.query)
 
-            if qs.get("error"):
-                raise MyPupAuthError(
-                    f"Silent renewal error: {qs['error'][0]} (re-authentication required)"
-                )
+        parsed = urllib.parse.urlparse(location)
+        qs = urllib.parse.parse_qs(parsed.fragment or parsed.query)
 
-            access_token = (qs.get("access_token") or [""])[0]
-            if not access_token:
-                raise MyPupAuthError("Silent renewal did not return an access_token")
-
-            expires_in = float((qs.get("expires_in") or ["3600"])[0])
-            exp_claim = decode_jwt_claims(access_token).get("exp")
-            expires_at = (
-                float(exp_claim) - 60
-                if isinstance(exp_claim, (int, float))
-                else time.time() + expires_in - 60
+        if qs.get("error"):
+            raise MyPupAuthError(
+                f"Silent renewal error: {qs['error'][0]} (re-authentication required)"
             )
 
-            self.session_data.access_token = access_token
-            self.session_data.expires_at = expires_at
-            return self.session_data
+        access_token = (qs.get("access_token") or [""])[0]
+        if not access_token:
+            raise MyPupAuthError("Silent renewal did not return an access_token")
+
+        expires_in = float((qs.get("expires_in") or ["3600"])[0])
+        exp_claim = decode_jwt_claims(access_token).get("exp")
+        expires_at = (
+            float(exp_claim) - 60
+            if isinstance(exp_claim, (int, float))
+            else time.time() + expires_in - 60
+        )
+
+        self.session_data.access_token = access_token
+        self.session_data.expires_at = expires_at
+        return self.session_data
 
     async def _ensure_valid_token(self) -> str:
         if (
