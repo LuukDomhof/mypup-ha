@@ -11,7 +11,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
-from .coordinator import MyPupDataUpdateCoordinator
+from .coordinator import MyPupDataUpdateCoordinator, build_mypup_device_info
 
 
 async def async_setup_entry(
@@ -38,6 +38,7 @@ class MyPupBaseSensor(CoordinatorEntity[MyPupDataUpdateCoordinator], SensorEntit
     def __init__(self, coordinator: MyPupDataUpdateCoordinator, entry: ConfigEntry) -> None:
         super().__init__(coordinator)
         self._entry = entry
+        self._attr_device_info = build_mypup_device_info(coordinator, entry)
 
 
 class MyPupReadyParcelsSensor(MyPupBaseSensor):

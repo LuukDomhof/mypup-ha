@@ -9,6 +9,7 @@ from typing import Any
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.update_coordinator import DataUpdateCoordinator, UpdateFailed
 
 from .api import MyPupApiClient, MyPupApiError, MyPupAuthError
@@ -27,6 +28,26 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def build_mypup_device_info(
+    coordinator: MyPupDataUpdateCoordinator, entry: ConfigEntry
+) -> DeviceInfo:
+    """Build a single logical Service DeviceInfo for the MyPup account/pickup point."""
+    pup_name = (
+        coordinator.data.get("pickup_point", {}).get("pickUpPoint", {}).get("name")
+        if coordinator.data
+        else None
+    )
+    name = f"MyPup ({pup_name})" if pup_name else entry.title or "MyPup"
+    return DeviceInfo(
+        entry_type=DeviceEntryType.SERVICE,
+        identifiers={(DOMAIN, entry.entry_id)},
+        name=name,
+        manufacturer="MyPup",
+        model="Pick Up Point",
+        configuration_url="https://mypup.app",
+    )
 
 
 class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):

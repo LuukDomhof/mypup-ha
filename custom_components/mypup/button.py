@@ -14,7 +14,7 @@ from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import MyPupApiError
 from .const import DOMAIN
-from .coordinator import MyPupDataUpdateCoordinator
+from .coordinator import MyPupDataUpdateCoordinator, build_mypup_device_info
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -45,6 +45,7 @@ class MyPupUnlockNextLockerButton(CoordinatorEntity[MyPupDataUpdateCoordinator],
         super().__init__(coordinator)
         self._entry = entry
         self._attr_unique_id = f"{entry.entry_id}_unlock_ready_locker"
+        self._attr_device_info = build_mypup_device_info(coordinator, entry)
 
     @property
     def available(self) -> bool:
@@ -102,6 +103,7 @@ class MyPupRefreshButton(CoordinatorEntity[MyPupDataUpdateCoordinator], ButtonEn
     def __init__(self, coordinator: MyPupDataUpdateCoordinator, entry: ConfigEntry) -> None:
         super().__init__(coordinator)
         self._attr_unique_id = f"{entry.entry_id}_refresh"
+        self._attr_device_info = build_mypup_device_info(coordinator, entry)
 
     async def async_press(self) -> None:
         """Trigger an immediate coordinator refresh."""
