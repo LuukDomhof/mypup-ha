@@ -18,3 +18,4 @@ Follow these steps for every integration update so HACS detects the new version 
    - `git tag -a vX.Y.Z -m "Release vX.Y.Z"`
    - `git push origin vX.Y.Z`
    - Publish the release on GitHub at `https://github.com/LuukDomhof/mypup-ha/releases/new?tag=vX.Y.Z` so HACS shows the update.
+   - **Always fill in the GitHub Release notes** (or click **Generate release notes**)—HACS pulls update changelogs directly from the GitHub Release body.
