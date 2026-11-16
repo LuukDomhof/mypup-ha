@@ -1,0 +1,11 @@
+{
+  "domain": "mypup",
+  "name": "MyPup",
+  "codeowners": ["@LuukDomhof"],
+  "config_flow": true,
+  "documentation": "https://github.com/LuukDomhof/mypup-ha",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/LuukDomhof/mypup-ha/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

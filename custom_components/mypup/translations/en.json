@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect your MyPup account",
+        "description": "Sign in at {auth_url} (with Remember Me checked) so login.mypup.app sets a persistent session cookie, then paste your login.mypup.app Cookie header (recommended for automatic background renewal) or an access_token.",
+        "data": {
+          "auth_cookies": "login.mypup.app Cookie header or JSON (recommended)",
+          "access_token": "Access Token (optional fallback, short-lived)"
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate MyPup",
+        "description": "Your MyPup session expired. Sign in at {auth_url} and paste updated login.mypup.app cookies or an access_token.",
+        "data": {
+          "auth_cookies": "login.mypup.app Cookie header or JSON (recommended)",
+          "access_token": "Access Token (optional fallback)"
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Authentication failed. Please verify the cookies or access token.",
+      "cannot_connect": "Unable to connect to MyPup.",
+      "unknown": "Unexpected error occurred."
+    },
+    "abort": {
+      "already_configured": "This MyPup account is already configured.",
+      "reauth_successful": "Re-authentication successful."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "MyPup Options",
+        "data": {
+          "scan_interval": "Polling interval (minutes)",
+          "shipments_limit": "Number of shipments to fetch",
+          "fetch_access_codes": "Fetch pickup PIN & QR codes for ready parcels"
+        }
+      }
+    }
+  }
+}

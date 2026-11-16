@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+.venv/
+.mypup_tokens.json
+.DS_Store
