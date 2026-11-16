@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import time
 from typing import Any
 
@@ -34,6 +35,8 @@ from .const import (
     DEFAULT_SHIPMENTS_LIMIT,
     DOMAIN,
 )
+
+_LOGGER = logging.getLogger(__name__)
 
 
 class MyPupConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
@@ -128,11 +131,14 @@ class MyPupConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 self._abort_if_unique_id_configured()
 
                 return self.async_create_entry(title=title, data=new_data)
-            except MyPupAuthError:
+            except MyPupAuthError as err:
+                _LOGGER.warning("MyPup auth error: %s", err)
                 errors["base"] = "invalid_auth"
-            except MyPupApiError:
+            except MyPupApiError as err:
+                _LOGGER.warning("MyPup API error: %s", err)
                 errors["base"] = "cannot_connect"
             except Exception:
+                _LOGGER.exception("Unexpected error in MyPup config flow")
                 errors["base"] = "unknown"
 
         schema = vol.Schema(

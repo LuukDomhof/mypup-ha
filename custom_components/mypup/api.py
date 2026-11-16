@@ -43,7 +43,9 @@ class MyPupSessionData:
 
 def parse_cookie_input(raw: str) -> dict[str, str]:
     """Parse a raw Cookie header string or JSON object into a {name: value} dict."""
-    text = raw.strip()
+    text = raw.strip().replace("\r", "").replace("\n", "")
+    if text.lower().startswith("cookie:"):
+        text = text[len("cookie:") :].strip()
     if not text:
         return {}
     if text.startswith("{"):
@@ -124,22 +126,25 @@ class MyPupApiClient:
         cookie_header = "; ".join(
             f"{k}={v}" for k, v in self.session_data.auth_cookies.items()
         )
-        async with self._session.get(
-            url,
-            headers={"Cookie": cookie_header},
-            allow_redirects=False,
-        ) as resp:
-            # Capture any sliding/refreshed cookies returned by login.mypup.app
-            for morsel in resp.cookies.values():
-                if morsel.value:
-                    self.session_data.auth_cookies[morsel.key] = morsel.value
+        try:
+            async with self._session.get(
+                url,
+                headers={"Cookie": cookie_header},
+                allow_redirects=False,
+            ) as resp:
+                # Capture any sliding/refreshed cookies returned by login.mypup.app
+                for morsel in resp.cookies.values():
+                    if morsel.value:
+                        self.session_data.auth_cookies[morsel.key] = morsel.value
 
-            if resp.status not in (301, 302, 303, 307, 308):
-                raise MyPupAuthError(
-                    f"Silent renewal failed with HTTP {resp.status}; re-authentication required"
-                )
+                if resp.status not in (301, 302, 303, 307, 308):
+                    raise MyPupAuthError(
+                        f"Silent renewal failed with HTTP {resp.status}; re-authentication required"
+                    )
 
-            location = resp.headers.get("Location", "")
+                location = resp.headers.get("Location", "")
+        except aiohttp.ClientError as err:
+            raise MyPupApiError(f"Network error during silent renewal: {err}") from err
             parsed = urllib.parse.urlparse(location)
             qs = urllib.parse.parse_qs(parsed.fragment or parsed.query)
 
