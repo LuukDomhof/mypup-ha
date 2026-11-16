@@ -44,7 +44,7 @@ def _build_options_schema(options: dict[str, Any]) -> vol.Schema:
     """Build the options schema using numeric input boxes (no sliders)."""
     return vol.Schema(
         {
-            vol.Optional(
+            vol.Required(
                 CONF_SCAN_INTERVAL,
                 default=options.get(CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL_MINUTES),
             ): selector.NumberSelector(
@@ -56,7 +56,7 @@ def _build_options_schema(options: dict[str, Any]) -> vol.Schema:
                     unit_of_measurement="min",
                 )
             ),
-            vol.Optional(
+            vol.Required(
                 CONF_SHIPMENTS_LIMIT,
                 default=options.get(CONF_SHIPMENTS_LIMIT, DEFAULT_SHIPMENTS_LIMIT),
             ): selector.NumberSelector(
@@ -67,7 +67,7 @@ def _build_options_schema(options: dict[str, Any]) -> vol.Schema:
                     mode=selector.NumberSelectorMode.BOX,
                 )
             ),
-            vol.Optional(
+            vol.Required(
                 CONF_FETCH_ACCESS_CODES,
                 default=options.get(CONF_FETCH_ACCESS_CODES, DEFAULT_FETCH_ACCESS_CODES),
             ): selector.BooleanSelector(),
