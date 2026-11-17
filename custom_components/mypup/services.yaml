@@ -1,16 +1,15 @@
 unlock_locker:
-  name: Unlock MyPup locker
-  description: Unlock a MyPup locker by shipment_uid or locker number, or the first ready parcel if both are omitted.
   fields:
     shipment_uid:
-      name: Shipment UID
-      description: Optional shipmentUid UUID.
       required: false
       selector:
         text:
     locker:
-      name: Locker number
-      description: Optional locker number (e.g. "15") for a ReadyForPickup parcel.
       required: false
       selector:
         text:
+    config_entry_id:
+      required: false
+      selector:
+        config_entry:
+          integration: mypup

@@ -13,19 +13,22 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .api import MyPupApiError
-from .const import DOMAIN
-from .coordinator import MyPupDataUpdateCoordinator, build_mypup_device_info
+from .coordinator import (
+    MyPupConfigEntry,
+    MyPupDataUpdateCoordinator,
+    build_mypup_device_info,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: MyPupConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up MyPup button entities."""
-    coordinator: MyPupDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     async_add_entities(
         [
             MyPupUnlockNextLockerButton(coordinator, entry),

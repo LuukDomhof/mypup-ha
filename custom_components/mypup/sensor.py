@@ -5,13 +5,12 @@ from __future__ import annotations
 from typing import Any
 
 from homeassistant.components.sensor import SensorEntity, SensorStateClass
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
 from .coordinator import (
+    MyPupConfigEntry,
     MyPupDataUpdateCoordinator,
     _format_parcel,
     build_mypup_device_info,
@@ -20,11 +19,11 @@ from .coordinator import (
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: ConfigEntry,
+    entry: MyPupConfigEntry,
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up MyPup sensors."""
-    coordinator: MyPupDataUpdateCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator = entry.runtime_data
     async_add_entities(
         [
             MyPupIncomingParcelsSensor(coordinator, entry),

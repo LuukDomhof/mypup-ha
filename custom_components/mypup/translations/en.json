@@ -81,5 +81,25 @@
         "name": "Refresh parcels"
       }
     }
+  },
+  "services": {
+    "unlock_locker": {
+      "name": "Unlock MyPup locker",
+      "description": "Unlock a MyPup locker by shipment_uid or locker number, or the first ready parcel if both are omitted.",
+      "fields": {
+        "shipment_uid": {
+          "name": "Shipment UID",
+          "description": "Optional shipmentUid UUID."
+        },
+        "locker": {
+          "name": "Locker number",
+          "description": "Optional locker number (e.g. \"15\") for a ReadyForPickup parcel."
+        },
+        "config_entry_id": {
+          "name": "MyPup Account",
+          "description": "Optional MyPup integration entry when multiple accounts are configured."
+        }
+      }
+    }
   }
 }

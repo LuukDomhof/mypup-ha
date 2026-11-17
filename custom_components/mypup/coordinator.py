@@ -2,9 +2,10 @@
 
 from __future__ import annotations
 
+import asyncio
 import logging
 from datetime import timedelta
-from typing import Any
+from typing import Any, TypeAlias
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -31,6 +32,8 @@ from .const import (
 )
 
 _LOGGER = logging.getLogger(__name__)
+
+MyPupConfigEntry: TypeAlias = ConfigEntry["MyPupDataUpdateCoordinator"]
 
 
 def build_mypup_device_info(
@@ -180,7 +183,7 @@ class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             incoming: list[dict[str, Any]] = []
             ready: list[dict[str, Any]] = []
             previous: list[dict[str, Any]] = []
-            access_codes: dict[str, dict[str, str | None]] = {}
+            ready_uids: list[str] = []
 
             for item in items:
                 state = item.get("stateCode")
@@ -188,11 +191,18 @@ class MyPupDataUpdateCoordinator(DataUpdateCoordinator[dict[str, Any]]):
                 if state == STATE_READY_FOR_PICKUP:
                     ready.append(item)
                     if fetch_codes and uid:
-                        access_codes[uid] = await self._async_fetch_access_codes(uid)
+                        ready_uids.append(uid)
                 elif state in INCOMING_STATES:
                     incoming.append(item)
                 else:
                     previous.append(item)
+
+            access_codes: dict[str, dict[str, str | None]] = {}
+            if ready_uids:
+                results = await asyncio.gather(
+                    *(self._async_fetch_access_codes(uid) for uid in ready_uids)
+                )
+                access_codes = dict(zip(ready_uids, results, strict=True))
 
             self._fire_transition_events(items, access_codes)
 
