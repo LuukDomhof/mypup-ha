@@ -206,7 +206,14 @@ class MyPupConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     )
                 }
             ),
-            description_placeholders={"auth_url": auth_url},
+            description_placeholders={
+                "auth_url": auth_url,
+                "console_cmd": (
+                    "copy(JSON.parse(sessionStorage.getItem("
+                    "'oidc.user:https://login.mypup.app:mypup.web.public'"
+                    ")).access_token)"
+                ),
+            },
             errors=errors,
         )
 

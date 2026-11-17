@@ -18,7 +18,7 @@
       },
       "token": {
         "title": "Connect via Access Token",
-        "description": "Open [MyPup Login]({auth_url}) and sign in, then on `mypup.app` open DevTools Console and run:\n`copy(JSON.parse(sessionStorage.getItem('oidc.user:https://login.mypup.app:mypup.web.public')).access_token)`",
+        "description": "Open [MyPup Login]({auth_url}) and sign in, then on `mypup.app` open DevTools Console and run:\n`{console_cmd}`",
         "data": {
           "access_token": "Access Token"
         }
