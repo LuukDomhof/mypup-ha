@@ -29,46 +29,9 @@ Home Assistant custom integration and standalone verification CLI for **MyPup** 
 
 ## Dashboard Examples
 
-### Markdown Card (Ready Parcels)
-```yaml
-type: markdown
-title: MyPup Parcels Ready
-content: >
-  {% set parcels = state_attr('sensor.mypup_my_pickup_point_parcels_ready_for_pickup', 'parcels') or [] %}
-  {% if parcels | count == 0 %}
-  No parcels ready for pickup.
-  {% else %}
-  {% for p in parcels %}
-  - **{{ p.description or p.reference_no }}** — Locker **{{ p.locker }}** | PIN: `{{ p.pin or 'N/A' }}`
-  {% endfor %}
-  {% endif %}
-```
-
-### Streamline Card (`cards_javascript`)
-```yaml
-streamline_templates:
-  mypup_parcel_list:
-    card:
-      type: vertical-stack
-      cards_javascript: |
-        const parcels = states['sensor.mypup_my_pickup_point_parcels_ready_for_pickup']?.attributes?.parcels || [];
-        if (!parcels.length) {
-          return [{ type: 'markdown', content: 'No MyPup parcels ready for pickup.' }];
-        }
-        return parcels.map((p) => ({
-          type: 'custom:mushroom-template-card',
-          primary: p.description || p.reference_no,
-          secondary: `Locker ${p.locker} • PIN: ${p.pin || 'N/A'}`,
-          icon: 'mdi:package-variant-closed-check',
-          icon_color: 'amber',
-          tap_action: {
-            action: 'perform-action',
-            perform_action: 'mypup.unlock_locker',
-            data: { shipment_uid: p.shipment_uid },
-            confirmation: { text: `Unlock Locker ${p.locker}?` }
-          }
-        }));
-```
+See [EXAMPLES.md](EXAMPLES.md) for copy-paste dashboard cards covering **Ready for Pickup**, **Incoming**, **Previous**, and **All Parcels** in two styles:
+- **Basic Home Assistant** (built-in Markdown card, no custom cards required)
+- **Streamline Card + Mushroom** (`custom:streamline-card` + `custom:mushroom-template-card`)
 
 ## Standalone Verification CLI
 
