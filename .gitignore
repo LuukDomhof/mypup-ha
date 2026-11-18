@@ -3,3 +3,4 @@ __pycache__/
 .venv/
 .mypup_tokens.json
 .DS_Store
+NOTES.md

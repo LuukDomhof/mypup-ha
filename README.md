@@ -12,7 +12,7 @@ Home Assistant custom integration and standalone verification CLI for **MyPup** 
   - **Incoming parcels** (`_incoming_parcels`) — pre-locker states (`Registered`, `Arrived`, `WaitForLocker`, `LockerAssigned`) with a `parcels` attribute.
   - **Parcels ready for pickup** (`_parcels_ready_for_pickup`) — `ReadyForPickup` parcels with `parcels` attribute (including `locker`, `pin`, `qr_code`, `shipment_uid`, `reference_no`, `description`).
   - **Previous parcels** (`_previous_parcels`) — completed/historical parcels with a `parcels` attribute.
-  - **Total parcels** (`_total_parcels`) — all tracked parcels with a `parcels` attribute (including `pin` and `qr_code` for `ReadyForPickup` items).
+  - **All parcels** (`_all_parcels` / `_total_parcels` on existing installs) — all tracked parcels with a `parcels` attribute (including `pin` and `qr_code` for `ReadyForPickup` items).
   - **Main pickup point** (`_main_pickup_point`) — assigned pickup point name, `mail_code`, `pup_uid`, and `delivery_address_lines`.
 - **Buttons & Services:**
   - **Unlock ready locker** button (`button.*_unlock_ready_locker`) & **Refresh parcels** button (`button.*_refresh_parcels`).

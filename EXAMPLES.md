@@ -66,7 +66,7 @@ content: |
 type: markdown
 title: All Parcels
 content: |
-  {% set parcels = state_attr('sensor.mypup_my_pickup_point_total_parcels', 'parcels') or [] %}
+  {% set parcels = state_attr('sensor.mypup_my_pickup_point_all_parcels', 'parcels') or [] %}
   {% if parcels | count == 0 %}
   No MyPup parcels found.
   {% else %}
@@ -156,7 +156,7 @@ streamline_templates:
 
   mypup_all_parcels:
     default:
-      - entity: sensor.mypup_my_pickup_point_total_parcels
+      - entity: sensor.mypup_my_pickup_point_all_parcels
       - max_items: 10
     card:
       type: vertical-stack
@@ -230,6 +230,6 @@ variables:
 type: custom:streamline-card
 template: mypup_all_parcels
 variables:
-  - entity: sensor.mypup_my_pickup_point_total_parcels
+  - entity: sensor.mypup_my_pickup_point_all_parcels
   - max_items: 10
 ```
