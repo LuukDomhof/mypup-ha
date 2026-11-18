@@ -9,6 +9,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
+from .const import STATE_READY_FOR_PICKUP
 from .coordinator import (
     MyPupConfigEntry,
     MyPupDataUpdateCoordinator,
@@ -136,6 +137,21 @@ class MyPupTotalParcelsSensor(MyPupBaseSensor):
     @property
     def native_value(self) -> int:
         return len(self.coordinator.data.get("shipments", []))
+
+    @property
+    def extra_state_attributes(self) -> dict[str, Any]:
+        access_codes = self.coordinator.data.get("access_codes", {})
+        return {
+            "parcels": [
+                _format_parcel(
+                    item,
+                    access_codes.get(item.get("shipmentUid"), {})
+                    if item.get("stateCode") == STATE_READY_FOR_PICKUP
+                    else None,
+                )
+                for item in self.coordinator.data.get("shipments", [])
+            ]
+        }
 
 
 class MyPupMainPickupPointSensor(MyPupBaseSensor):

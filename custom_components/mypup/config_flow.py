@@ -62,7 +62,7 @@ def _build_options_schema(options: dict[str, Any]) -> vol.Schema:
             ): selector.NumberSelector(
                 selector.NumberSelectorConfig(
                     min=5,
-                    max=100,
+                    max=50,
                     step=1,
                     mode=selector.NumberSelectorMode.BOX,
                 )

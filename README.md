@@ -2,15 +2,17 @@
 
 Home Assistant custom integration and standalone verification CLI for **MyPup** (My Pick Up Point).
 
+> **Note & Disclaimer:** This is an unofficial integration and is not affiliated with, endorsed by, or supported by MyPup. All code in this repository was written by an LLM under human supervision and design decisions; individual scripts were not manually verified line-by-line by a human, though every available feature was tested by a human (mostly against real-world data).
+
 ## Features
 
 - **Passwordless OAuth Silent Renewal:** Authenticates via your `login.mypup.app` session cookies using `prompt=none` silent renewal (no username/password stored). Includes a short-lived Access Token fallback and automatic HA re-authentication prompts if the session eventually expires.
-- **Configurable Options:** Set polling interval (`1–60` min), shipment fetch limit (`5–100`), and pickup PIN/QR fetching during setup or anytime under **Configure**.
-- **Mutually Exclusive Parcel Sensors:**
+- **Configurable Options:** Set polling interval (`1–60` min), shipment fetch limit (`5–50`), and pickup PIN/QR fetching during setup or anytime under **Configure**.
+- **Parcel Sensors:**
   - **Incoming parcels** (`_incoming_parcels`) — pre-locker states (`Registered`, `Arrived`, `WaitForLocker`, `LockerAssigned`) with a `parcels` attribute.
   - **Parcels ready for pickup** (`_parcels_ready_for_pickup`) — `ReadyForPickup` parcels with `parcels` attribute (including `locker`, `pin`, `qr_code`, `shipment_uid`, `reference_no`, `description`).
   - **Previous parcels** (`_previous_parcels`) — completed/historical parcels with a `parcels` attribute.
-  - **Total parcels** (`_total_parcels`) — overall parcel count.
+  - **Total parcels** (`_total_parcels`) — all tracked parcels with a `parcels` attribute (including `pin` and `qr_code` for `ReadyForPickup` items).
   - **Main pickup point** (`_main_pickup_point`) — assigned pickup point name, `mail_code`, `pup_uid`, and `delivery_address_lines`.
 - **Buttons & Services:**
   - **Unlock ready locker** button (`button.*_unlock_ready_locker`) & **Refresh parcels** button (`button.*_refresh_parcels`).

@@ -66,14 +66,11 @@ content: |
 type: markdown
 title: All Parcels
 content: |
-  {% set ready = state_attr('sensor.mypup_my_pickup_point_parcels_ready_for_pickup', 'parcels') or [] %}
-  {% set incoming = state_attr('sensor.mypup_my_pickup_point_incoming_parcels', 'parcels') or [] %}
-  {% set previous = state_attr('sensor.mypup_my_pickup_point_previous_parcels', 'parcels') or [] %}
-  {% set all = (ready + incoming + previous)[:10] %}
-  {% if all | count == 0 %}
+  {% set parcels = state_attr('sensor.mypup_my_pickup_point_total_parcels', 'parcels') or [] %}
+  {% if parcels | count == 0 %}
   No MyPup parcels found.
   {% else %}
-  {%- for p in all %}
+  {%- for p in parcels[:10] %}
   {%- if p.state_code == 'ReadyForPickup' %}
   - **{{ p.description or p.reference_no }}** — Ready • Locker **{{ p.locker }}** • PIN: `{{ p.pin or 'N/A' }}`
   {%- else %}
@@ -159,17 +156,12 @@ streamline_templates:
 
   mypup_all_parcels:
     default:
-      - ready_entity: sensor.mypup_my_pickup_point_parcels_ready_for_pickup
-      - incoming_entity: sensor.mypup_my_pickup_point_incoming_parcels
-      - previous_entity: sensor.mypup_my_pickup_point_previous_parcels
+      - entity: sensor.mypup_my_pickup_point_total_parcels
       - max_items: 10
     card:
       type: vertical-stack
       cards_javascript: |
-        const ready = states['[[ready_entity]]']?.attributes?.parcels || [];
-        const incoming = states['[[incoming_entity]]']?.attributes?.parcels || [];
-        const previous = states['[[previous_entity]]']?.attributes?.parcels || [];
-        const all = [...ready, ...incoming, ...previous].slice(0, Number('[[max_items]]') || 10);
+        const all = (states['[[entity]]']?.attributes?.parcels || []).slice(0, Number('[[max_items]]') || 10);
         if (!all.length) {
           return [{ type: 'markdown', content: 'No MyPup parcels found.' }];
         }
@@ -238,8 +230,6 @@ variables:
 type: custom:streamline-card
 template: mypup_all_parcels
 variables:
-  - ready_entity: sensor.mypup_my_pickup_point_parcels_ready_for_pickup
-  - incoming_entity: sensor.mypup_my_pickup_point_incoming_parcels
-  - previous_entity: sensor.mypup_my_pickup_point_previous_parcels
+  - entity: sensor.mypup_my_pickup_point_total_parcels
   - max_items: 10
 ```
