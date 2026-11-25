@@ -33,6 +33,7 @@ INCOMING_STATES = frozenset(
         "Arrived",
         "WaitForLocker",
         "LockerAssigned",
+        "ReadyForDropoff",
     }
 )
 

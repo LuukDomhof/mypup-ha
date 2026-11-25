@@ -187,24 +187,26 @@ class TestMyPupCoordinator(unittest.TestCase):
     def test_splits_incoming_ready_previous_and_fires_events_after_startup(self) -> None:
         poll1 = [
             {"shipmentUid": "s1", "stateCode": "Arrived", "referenceNo": "R1"},
+            {"shipmentUid": "s4", "stateCode": "ReadyForDropoff", "referenceNo": "R4"},
             {"shipmentUid": "s2", "stateCode": "Received", "referenceNo": "R2"},
         ]
         poll2 = [
             {"shipmentUid": "s1", "stateCode": "ReadyForPickup", "referenceNo": "R1", "transferDetails": "15"},
             {"shipmentUid": "s3", "stateCode": "Registered", "referenceNo": "R3"},
+            {"shipmentUid": "s4", "stateCode": "ReadyForDropoff", "referenceNo": "R4"},
             {"shipmentUid": "s2", "stateCode": "Received", "referenceNo": "R2"},
         ]
         coord, hass, client = self._make_coordinator([poll1, poll2])
 
         data1 = asyncio.run(coord._async_update_data())
-        self.assertEqual(len(data1["incoming_shipments"]), 1)
+        self.assertEqual(len(data1["incoming_shipments"]), 2)
         self.assertEqual(len(data1["ready_shipments"]), 0)
         self.assertEqual(len(data1["previous_shipments"]), 1)
         # Startup poll must not fire events
         hass.bus.async_fire.assert_not_called()
 
         data2 = asyncio.run(coord._async_update_data())
-        self.assertEqual(len(data2["incoming_shipments"]), 1)
+        self.assertEqual(len(data2["incoming_shipments"]), 2)
         self.assertEqual(len(data2["ready_shipments"]), 1)
         self.assertEqual(len(data2["previous_shipments"]), 1)
         self.assertEqual(data2["access_codes"]["s1"], {"pin": "1234", "qr_code": "QRDATA"})
